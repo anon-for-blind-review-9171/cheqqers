@@ -1,6 +1,6 @@
 # Quantum checkers
 
-This repository implements quantum checkers.
+This repository implements quantum checkers. The source code is made available under the GNU Affero General Public License v3.0.
 
 There are three versions of Quantumness that can be used:
 - Classical: Normal Checkers
