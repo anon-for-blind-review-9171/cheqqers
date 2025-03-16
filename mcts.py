@@ -44,11 +44,11 @@ class MCTS:
             while node.is_fully_expanded():
                 node = node.select()
 
-            result = node.game.get_game_state().value
+            result = node.game.get_game_state()
 
             # If the game has ended
-            if result != GameState.IN_PROGRESS.value:
-                value = 0.5 if result == GameState.DRAW else (0 if result == self.goal_state else 1)
+            if result != GameState.IN_PROGRESS:
+                value = 0.5 if result == GameState.DRAW else 1
                 node.backpropagate(value)
             else:
                 # Expand all children
@@ -110,6 +110,7 @@ class Node:
     def simulate(self):
         sim_game = deepcopy(self.game)
         rollout_limit = self.args.get("rollout", 100)
+        rollout_color = sim_game.turn
 
         p1, p2 = RandomBot(), RandomBot()
         counter = 0
@@ -120,7 +121,9 @@ class Node:
             counter += 1
 
         result = sim_game.get_game_state()
-        return 1 if (result == GameState.WHITE_WON and self.root_color == PieceColor.WHITE) or (result == GameState.BLACK_WON and self.root_color == PieceColor.BLACK) else 0
+        if result == GameState.DRAW:
+            return 0.5
+        return 1 if (result == GameState.WHITE_WON and rollout_color == PieceColor.BLACK) or (result == GameState.BLACK_WON and rollout_color == PieceColor.WHITE) else 0
 
     def backpropagate(self, value):
         self.value_sum += value
